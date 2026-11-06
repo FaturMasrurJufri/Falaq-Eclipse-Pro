@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FALAK-ECLIPSE PRO | Kalkulator & Prediktor Gerhana</title>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-card: #151c2c;
+      --bg-card-hover: #1e2940;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-solar: #f59e0b;
+      --accent-solar-bg: rgba(245, 158, 11, 0.12);
+      --accent-lunar: #38bdf8;
+      --accent-lunar-bg: rgba(56, 189, 248, 0.12);
+      --accent-green: #10b981;
+      --border-color: #26334d;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px 16px;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* Header & Identitas Developer */
+    .app-header {
+      text-align: center;
+      padding: 32px 20px;
+      background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .app-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #38bdf8, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .app-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 14px;
+    }
+
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #334155;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    }
+
+    .blink-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--accent-green);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulseBlink 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseBlink {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--accent-green), 0 0 20px var(--accent-green);
+      }
+      50% {
+        opacity: 0.2;
+        transform: scale(0.75);
+        box-shadow: 0 0 2px var(--accent-green);
+      }
+    }
+
+    /* Panel Kontrol */
+    .control-panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-lunar);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: all 0.2s ease;
+      flex: 1;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.15);
+    }
+
+    .btn-secondary {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+    }
+
+    .btn-secondary:hover {
+      background-color: #334155;
+    }
+
+    /* Ringkasan Statistik */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-info span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .stat-info strong {
+      font-size: 1.65rem;
+      color: var(--text-main);
+    }
+
+    .stat-tag {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* Daftar Kartu Gerhana */
+    .eclipse-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+    }
+
+    .eclipse-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eclipse-card:hover {
+      transform: translateY(-3px);
+      background-color: var(--bg-card-hover);
+    }
+
+    .eclipse-card.solar {
+      border-top: 4px solid var(--accent-solar);
+    }
+
+    .eclipse-card.lunar {
+      border-top: 4px solid var(--accent-lunar);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .badge-type {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.4px;
+    }
+
+    .badge-solar {
+      background-color: var(--accent-solar-bg);
+      color: var(--accent-solar);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .badge-lunar {
+      background-color: var(--accent-lunar-bg);
+      color: var(--accent-lunar);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .eclipse-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .eclipse-date {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .data-table td {
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .data-table td:first-child {
+      color: var(--text-muted);
+    }
+
+    .data-table td:last-child {
+      text-align: right;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .visibility-note {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      background-color: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid #64748b;
+      color: #cbd5e1;
+    }
+
+    .visibility-note.indo-visible {
+      border-left-color: var(--accent-green);
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #d1fae5;
+    }
+
+    .status-banner {
+      background-color: #1e293b;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 16px;
+      border-radius: var(--radius);
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 640px) {
+      .app-title {
+        font-size: 1.65rem;
+      }
+      .control-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header Aplikasi -->
+    <header class="app-header">
+      <h1 class="app-title">FALAK-ECLIPSE PRO</h1>
+      <p class="app-subtitle">Sistem Prediksi & Ephemeris Gerhana Matahari dan Bulan Presisi Tinggi (Algoritma Jean Meeus)</p>
+      <div class="dev-badge">
+        <span class="blink-dot" aria-hidden="true"></span>
+        <span>developer: fatur62</span>
+      </div>
+    </header>
+
+    <!-- Panel Filter & Konfigurasi -->
+    <section class="control-panel" aria-label="Pengaturan Kalkulasi">
+      <div class="form-group">
+        <label for="startYear">Tahun Mulai</label>
+        <input type="number" id="startYear" class="form-control" min="1900" max="2150" value="2026">
+      </div>
+
+      <div class="form-group">
+        <label for="endYear">Tahun Akhir</label>
+        <input type="number" id="endYear" class="form-control" min="1900" max="2150" value="2030">
+      </div>
+
+      <div class="form-group">
+        <label for="filterType">Jenis Gerhana</label>
+        <select id="filterType" class="form-control">
+          <option value="ALL">Semua Gerhana (Matahari & Bulan)</option>
+          <option value="SOLAR">Hanya Gerhana Matahari</option>
+          <option value="LUNAR">Hanya Gerhana Bulan</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="timezoneOffset">Zona Waktu Tampilan</label>
+        <select id="timezoneOffset" class="form-control">
+          <option value="7">WIB (UTC+7)</option>
+          <option value="8">WITA (UTC+8)</option>
+          <option value="9">WIT (UTC+9)</option>
+          <option value="0">UTC / GMT (Universal)</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" id="btnCalculate" class="btn btn-primary">Hitung Ephemeris</button>
+        <button type="button" id="btnExportJson" class="btn btn-secondary" title="Unduh hasil dalam format JSON">Ekspor JSON</button>
+      </div>
+    </section>
+
+    <!-- Bar Statistik -->
+    <section class="stats-bar" id="statsBar">
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Total Kejadian Gerhana</span>
+          <strong id="statTotal">0</strong>
+        </div>
+        <span class="stat-tag" style="background:#1e293b; color:#cbd5e1;">Siklus Saros/Sinodik</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Gerhana Matahari</span>
+          <strong id="statSolar" style="color:var(--accent-solar);">0</strong>
+        </div>
+        <span class="stat-tag badge-solar">Ijtimak (New Moon)</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Gerhana Bulan</span>
+          <strong id="statLunar" style="color:var(--accent-lunar);">0</strong>
+        </div>
+        <span class="stat-tag badge-lunar">Istiqbal (Full Moon)</span>
+      </div>
+    </section>
+
+    <!-- Daftar Hasil Prediksi -->
+    <main id="eclipseResults" class="eclipse-grid" aria-live="polite"></main>
+  </div>
+
+  <script>
+    /**
+     * Mesin Astronomi Jean Meeus (Astronomical Algorithms, Chapter 49 & 54)
+     * Menghitung Fase Lunasi, Elemen Besselian/Gamma, Magnitudo, dan Durasi Gerhana.
+     */
+    const DEG2RAD = Math.PI / 180;
+
+    const sinD = (deg) => Math.sin(deg * DEG2RAD);
+    const cosD = (deg) => Math.cos(deg * DEG2RAD);
+    const mod360 = (deg) => ((deg % 360) + 360) % 360;
+
+    // State penyimpanan data JSON hasil kalkulasi dengan struktur tervalidasi
+    let currentEclipseDataset = [];
+
+    /**
+     * Estimasi nilai Delta T (TD - UT) dalam satuan detik untuk abad ke-20 & 21
+     * Berdasarkan polinomial NASA (Espenak & Meeus)
+     */
+    function calculateDeltaT(year) {
+      const t = (year - 2000) / 100;
+      if (year >= 2005 && year <= 2050) {
+        const y = year - 2000;
+        return 62.92 + 0.32217 * y + 0.005589 * y * y;
+      }
+      return 102.3 + 123.5 * t + 32.5 * t * t;
+    }
+
+    /**
+     * Konversi Julian Day (JD) ke objek Date JavaScript (UTC)
+     */
+    function julianDayToDate(jd) {
+      const unixMillis = (jd - 2440587.5) * 86400000;
+      return new Date(unixMillis);
+    }
+
+    /**
+     * Kalkulasi Gerhana untuk nilai k tertentu
+     * k integer (x.0) = Bulan Baru (Potensi Gerhana Matahari)
+     * k setengah integer (x.5) = Bulan Purnama (Potensi Gerhana Bulan)
+     */
+    function computeEclipseForK(k) {
+      const isSolar = Math.abs(k - Math.round(k)) < 0.001;
+      const T = k / 1236.85;
+      const T2 = T * T;
+      const T3 = T2 * T;
+      const T4 = T3 * T;
+
+      // Waktu Fase Rata-Rata (JDE)
+      let JDE = 2451550.09766 + 29.530588861 * k
+                + 0.00015437 * T2
+                - 0.000000150 * T3
+                + 0.00000000073 * T4;
+
+      // Eksentrisitas orbit Bumi (E)
+      const E = 1 - 0.002516 * T - 0.0000074 * T2;
+
+      // Anomali rata-rata Matahari (M)
+      const M = mod360(2.5534 + 29.10535670 * k - 0.0000014 * T2 - 0.00000011 * T3);
+
+      // Anomali rata-rata Bulan (M')
+      const Mprime = mod360(201.5643 + 385.81693528 * k + 0.0107582 * T2 + 0.00001238 * T3 - 0.000000058 * T4);
+
+      // Argumen Lintang Bulan (F)
+      const F = mod360(160.7108 + 390.67050284 * k - 0.0016118 * T2 - 0.00000227 * T3 + 0.000000011 * T4);
+
+      // Bujur Titik Simpul Naik Bulan (Omega)
+      const Omega = mod360(124.7746 - 1.56375588 * k + 0.0020672 * T2 + 0.00000215 * T3);
+
+      // Syarat batas kemiringan simpul (F harus dekat dengan 0°, 180°, atau 360°)
+      let diffF = Math.abs(F % 180);
+      if (diffF > 90) diffF = 180 - diffF;
+      if (diffF > 21.5) return null; // Tidak mungkin terjadi gerhana
+
+      const F1 = F - 0.02665 * sinD(Omega);
+      const A1 = 299.77 + 0.107408 * k - 0.009173 * T2;
+
+      // Koreksi waktu puncak gerhana (JDE Maximum Eclipse)
+      let deltaJDE = (isSolar ? -0.4075 : -0.4065) * sinD(Mprime)
+                   + 0.1721 * E * sinD(M)
+                   + 0.0161 * sinD(2 * Mprime)
+                   - 0.0097 * sinD(2 * F1)
+                   + 0.0073 * E * sinD(Mprime - M)
+                   - 0.0050 * E * sinD(Mprime + M)
+                   - 0.0023 * sinD(Mprime - 2 * F1)
+                   + 0.0021 * E * sinD(2 * M)
+                   + 0.0012 * sinD(Mprime + 2 * F1)
+                   + 0.0006 * E * sinD(2 * Mprime + M)
+                   - 0.0004 * sinD(3 * Mprime)
+                   - 0.0003 * E * sinD(M + 2 * F1)
+                   + 0.0003 * sinD(A1)
+                   - 0.0002 * E * sinD(M - 2 * F1)
+                   - 0.0002 * E * sinD(2 * Mprime - M)
+                   - 0.0002 * sinD(Omega);
+
+      const JDE_Max = JDE + deltaJDE;
+
+      // Besaran P, Q, W, gamma, dan u dari Meeus
+      const P = 0.2070 * E * sinD(M)
+              + 0.0024 * E * sinD(2 * M)
+              - 0.0392 * sinD(Mprime)
+              + 0.0116 * sinD(2 * Mprime)
+              - 0.0073 * E * sinD(Mprime + M)
+              + 0.0067 * E * sinD(Mprime - M)
+              + 0.0118 * sinD(2 * F1);
+
+      const Q = 5.2207
+              - 0.0048 * E * cosD(M)
+              + 0.0020 * E * cosD(2 * M)
+              - 0.3299 * cosD(Mprime)
+              - 0.0060 * E * cosD(Mprime + M)
+              + 0.0041 * E * cosD(Mprime - M);
+
+      const W = Math.abs(cosD(F1));
+      const gamma = (P * cosD(F1) + Q * sinD(F1)) * (1 - 0.0048 * W);
+      const u = 0.0059
+              + 0.0046 * E * cosD(M)
+              - 0.0182 * cosD(Mprime)
+              + 0.0004 * cosD(2 * Mprime)
+              - 0.0005 * cosD(M + Mprime);
+
+      const absGamma = Math.abs(gamma);
+
+      // Konversi JDE (TD) ke JD (UTC) menggunakan Delta T
+      const approxYear = 2000 + (k / 12.3685);
+      const deltaTSeconds = calculateDeltaT(approxYear);
+      const JD_UTC = JDE_Max - (deltaTSeconds / 86400);
+
+      if (isSolar) {
+        // Klasifikasi Gerhana Matahari
+        const maxLimit = 1.5433 + u;
+        if (absGamma > maxLimit) return null;
+
+        let subType = '';
+        let magnitude = 0;
+
+        if (absGamma < 0.9972) {
+          if (u < 0) {
+            subType = 'Gerhana Matahari Total';
+          } else if (u > 0.0047) {
+            subType = 'Gerhana Matahari Cincin';
+          } else {
+            const omegaLimit = 0.00464 * Math.sqrt(1 - gamma * gamma);
+            subType = (u < omegaLimit) ? 'Gerhana Matahari Hibrida (Cincin-Total)' : 'Gerhana Matahari Cincin';
+          }
+          // Rasio diameter bulan terhadap matahari untuk gerhana sentral
+          magnitude = (1.5433 + u - absGamma) / (0.5461 + 2 * u);
+        } else {
+          // Cek non-sentral atau sebagian
+          if (absGamma < 0.9972 + Math.abs(u)) {
+            subType = (u < 0) ? 'Gerhana Matahari Total (Non-Sentral)' : 'Gerhana Matahari Cincin (Non-Sentral)';
+          } else {
+            subType = 'Gerhana Matahari Sebagian';
+          }
+          magnitude = (1.5433 + u - absGamma) / (0.5461 + 2 * u);
+        }
+
+        if (magnitude <= 0) return null;
+
+        return {
+          id: `SOLAR_${k.toFixed(1)}`,
+          kValue: k,
+          category: 'SOLAR',
+          typeLabel: subType,
+          jdUtc: Number(JD_UTC.toFixed(5)),
+          gamma: Number(gamma.toFixed(4)),
+          magnitude: Number(magnitude.toFixed(4)),
+          uRadius: Number(u.toFixed(4)),
+          semiDurationUmbraMin: null,
+          semiDurationPenumbraMin: null
+        };
+      } else {
+        // Klasifikasi Gerhana Bulan
+        const rho = 1.2848 + u; // Radius bayangan penumbra
+        const sigma = 0.7403 - u; // Radius bayangan umbra
+
+        const magPenumbra = (1.5573 + u - absGamma) / 0.5450;
+        const magUmbra = (1.0128 - u - absGamma) / 0.5450;
+
+        if (magPenumbra <= 0) return null;
+
+        let subType = '';
+        let primaryMag = 0;
+
+        if (magUmbra >= 1.0) {
+          subType = 'Gerhana Bulan Total';
+          primaryMag = magUmbra;
+        } else if (magUmbra > 0) {
+          subType = 'Gerhana Bulan Sebagian';
+          primaryMag = magUmbra;
+        } else {
+          subType = 'Gerhana Bulan Penumbra';
+          primaryMag = magPenumbra;
+        }
+
+        // Semi-durasi fase gerhana bulan (dalam menit)
+        const n = 0.5458 + 0.0400 * cosD(Mprime);
+        const penumbraSemiMin = (60 / n) * Math.sqrt(Math.max(0, Math.pow(1.5573 + u, 2) - gamma * gamma));
+        const umbraSemiMin = magUmbra > 0
+          ? (60 / n) * Math.sqrt(Math.max(0, Math.pow(1.0128 - u, 2) - gamma * gamma))
+          : 0;
+
+        return {
+          id: `LUNAR_${k.toFixed(1)}`,
+          kValue: k,
+          category: 'LUNAR',
+          typeLabel: subType,
+          jdUtc: Number(JD_UTC.toFixed(5)),
+          gamma: Number(gamma.toFixed(4)),
+          magnitude: Number(primaryMag.toFixed(4)),
+          magPenumbra: Number(magPenumbra.toFixed(4)),
+          magUmbra: Number(magUmbra.toFixed(4)),
+          semiDurationUmbraMin: Number(umbraSemiMin.toFixed(1)),
+          semiDurationPenumbraMin: Number(penumbraSemiMin.toFixed(1))
+        };
+      }
+    }
+
+    /**
+     * Evaluasi indikasi visibilitas di wilayah Indonesia (Bujur ~95° BT s/d 141° BT, Lintang 6° LU s/d 11° LS)
+     */
+    function evaluateIndonesiaVisibility(eclipseItem) {
+      const peakUtcDate = julianDayToDate(eclipseItem.jdUtc);
+      // Waktu lokal WIB (UTC + 7)
+      const wibHours = (peakUtcDate.getUTCHours() + peakUtcDate.getUTCMinutes() / 60 + 7) % 24;
+
+      if (eclipseItem.category === 'LUNAR') {
+        // Gerhana bulan terlihat di seluruh belahan bumi yang sedang malam (18:00 - 06:00 WIB)
+        const halfDurHours = (eclipseItem.semiDurationPenumbraMin || 120) / 60;
+        const startWib = (wibHours - halfDurHours + 24) % 24;
+        const endWib = (wibHours + halfDurHours) % 24;
+
+        const isPeakAtNight = (wibHours >= 17.5 || wibHours <= 6.2);
+        const isEdgeAtNight = (startWib >= 18 || endWib <= 6 || startWib <= 5.5 || endWib >= 18.2);
+
+        if (isPeakAtNight) {
+          return {
+            visible: true,
+            text: 'Teramati jelas di Indonesia (Puncak terjadi saat malam hari waktu Indonesia).'
+          };
+        } else if (isEdgeAtNight) {
+          return {
+            visible: true,
+            text: 'Teramati sebagian fase di Indonesia (Saat bulan terbit petang atau terbenam subuh).'
+          };
+        }
+        return {
+          visible: false,
+          text: 'Tidak teramati di Indonesia (Puncak terjadi pada siang hari waktu Indonesia).'
+        };
+      } else {
+        // Untuk Gerhana Matahari: perlu siang hari di Indonesia (06:30 - 17:30 WIB) dan lintasan Gamma dekat ekuator
+        const isDaytimeIndo = (wibHours >= 6.5 && wibHours <= 17.5);
+        const isNearEquatorialZone = Math.abs(eclipseItem.gamma) <= 0.85;
+
+        if (isDaytimeIndo && isNearEquatorialZone) {
+          return {
+            visible: true,
+            text: 'Berpotensi melewati/teramati dari wilayah Indonesia atau Asia Tenggara (Siang hari & zona ekuator).'
+          };
+        } else if (isDaytimeIndo) {
+          return {
+            visible: false,
+            text: 'Terjadi saat siang WIB, namun jalur bayangan utama condong ke lintang tinggi (Utara/Selatan).'
+          };
+        }
+        return {
+          visible: false,
+          text: 'Tidak teramati di Indonesia (Terjadi saat malam hari waktu Indonesia).'
+        };
+      }
+    }
+
+    /**
+     * Format Tanggal & Jam sesuai Zona Waktu yang dipilih
+     */
+    function formatDateTimeByOffset(jdUtc, offsetHours) {
+      const shiftedMillis = (jdUtc - 2440587.5) * 86400000 + (offsetHours * 3600000);
+      const d = new Date(shiftedMillis);
+
+      const namaBulan = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      ];
+
+      const tgl = String(d.getUTCDate()).padStart(2, '0');
+      const bln = namaBulan[d.getUTCMonth()];
+      const thn = d.getUTCFullYear();
+
+      const jam = String(d.getUTCHours()).padStart(2, '0');
+      const mnt = String(d.getUTCMinutes()).padStart(2, '0');
+      const dtk = String(d.getUTCSeconds()).padStart(2, '0');
+
+      const labelTz = offsetHours === 7 ? 'WIB' : offsetHours === 8 ? 'WITA' : offsetHours === 9 ? 'WIT' : 'UTC';
+
+      return {
+        year: thn,
+        dateString: `${tgl} ${bln} ${thn}`,
+        timeString: `${jam}:${mnt}:${dtk} ${labelTz}`
+      };
+    }
+
+    /**
+     * Fungsi Utama: Menghitung rentang tahun dan memperbarui DOM
+     */
+    function generateEclipsePredictions() {
+      const startYearInput = document.getElementById('startYear');
+      const endYearInput = document.getElementById('endYear');
+      const filterType = document.getElementById('filterType').value;
+      const tzOffset = parseInt(document.getElementById('timezoneOffset').value, 10) || 7;
+
+      let startYear = parseInt(startYearInput.value, 10);
+      let endYear = parseInt(endYearInput.value, 10);
+
+      if (isNaN(startYear) || startYear < 1900) startYear = 2026;
+      if (isNaN(endYear) || endYear > 2150) endYear = 2030;
+      if (endYear < startYear) {
+        endYear = startYear + 1;
+        endYearInput.value = endYear;
+      }
+
+      // Hitung rentang indeks lunasi k
+      const kStart = Math.floor((startYear - 2000) * 12.3685) - 2;
+      const kEnd = Math.ceil((endYear - 2000 + 1) * 12.3685) + 2;
+
+      const results = [];
+
+      for (let k = kStart; k <= kEnd; k++) {
+        // 1. Cek Gerhana Matahari (Bulan Baru = k.0)
+        const solarEclipse = computeEclipseForK(k);
+        if (solarEclipse) {
+          const dtInfo = formatDateTimeByOffset(solarEclipse.jdUtc, tzOffset);
+          if (dtInfo.year >= startYear && dtInfo.year <= endYear) {
+            results.push({ ...solarEclipse, dtInfo });
+          }
+        }
+
+        // 2. Cek Gerhana Bulan (Bulan Purnama = k + 0.5)
+        const lunarEclipse = computeEclipseForK(k + 0.5);
+        if (lunarEclipse) {
+          const dtInfo = formatDateTimeByOffset(lunarEclipse.jdUtc, tzOffset);
+          if (dtInfo.year >= startYear && dtInfo.year <= endYear) {
+            results.push({ ...lunarEclipse, dtInfo });
+          }
+        }
+      }
+
+      // Urutkan berdasarkan waktu kejadian (JD UTC)
+      results.sort((a, b) => a.jdUtc - b.jdUtc);
+
+      // Simpan secara aman ke dataset JSON
+      try {
+        const serialized = JSON.stringify(results);
+        const parsed = JSON.parse(serialized);
+        if (Array.isArray(parsed)) {
+          currentEclipseDataset = parsed;
+        }
+      } catch (err) {
+        console.error('Gagal melakukan serialisasi data JSON gerhana:', err);
+        currentEclipseDataset = [];
+      }
+
+      renderResults(currentEclipseDataset, filterType, tzOffset);
+    }
+
+    /**
+     * Render kartu hasil ke dalam Grid DOM
+     */
+    function renderResults(dataset, filterType, tzOffset) {
+      const container = document.getElementById('eclipseResults');
+      const statTotal = document.getElementById('statTotal');
+      const statSolar = document.getElementById('statSolar');
+      const statLunar = document.getElementById('statLunar');
+
+      container.innerHTML = '';
+
+      if (!Array.isArray(dataset) || dataset.length === 0) {
+        container.innerHTML = `<div class="status-banner">Tidak ditemukan data gerhana pada rentang tahun tersebut.</div>`;
+        statTotal.textContent = '0';
+        statSolar.textContent = '0';
+        statLunar.textContent = '0';
+        return;
+      }
+
+      const filtered = dataset.filter((item) => {
+        if (!item || typeof item.category !== 'string') return false;
+        if (filterType === 'ALL') return true;
+        return item.category === filterType;
+      });
+
+      const solarCount = filtered.filter((item) => item.category === 'SOLAR').length;
+      const lunarCount = filtered.filter((item) => item.category === 'LUNAR').length;
+
+      statTotal.textContent = String(filtered.length);
+      statSolar.textContent = String(solarCount);
+      statLunar.textContent = String(lunarCount);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="status-banner">Tidak ada gerhana yang sesuai dengan filter pilihan Anda.</div>`;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      filtered.forEach((item) => {
+        const isSolar = item.category === 'SOLAR';
+        const dtInfo = formatDateTimeByOffset(item.jdUtc, tzOffset);
+        const visInfo = evaluateIndonesiaVisibility(item);
+
+        const card = document.createElement('article');
+        card.className = `eclipse-card ${isSolar ? 'solar' : 'lunar'}`;
+
+        // Baris tambahan khusus gerhana bulan (durasi umbra/penumbra)
+        let extraRows = '';
+        if (!isSolar) {
+          const totalPenumbraHours = ((item.semiDurationPenumbraMin * 2) / 60).toFixed(2);
+          const totalUmbraMinutes = (item.semiDurationUmbraMin * 2).toFixed(0);
+          extraRows = `
+            <tr>
+              <td>Durasi Total Penumbra</td>
+              <td>${totalPenumbraHours} Jam</td>
+            </tr>
+            <tr>
+              <td>Durasi Fase Umbra</td>
+              <td>${totalUmbraMinutes > 0 ? totalUmbraMinutes + ' Menit' : '- (Hanya Penumbra)'}</td>
+            </tr>
+          `;
+        } else {
+          extraRows = `
+            <tr>
+              <td>Radius Bayangan (u)</td>
+              <td>${item.uRadius}</td>
+            </tr>
+            <tr>
+              <td>Indeks Lunasi (k)</td>
+              <td>${item.kValue}</td>
+            </tr>
+          `;
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <span class="badge-type ${isSolar ? 'badge-solar' : 'badge-lunar'}">
+                ${isSolar ? 'Gerhana Matahari' : 'Gerhana Bulan'}
+              </span>
+              <span style="font-size:0.8rem; color:var(--text-muted); font-family:monospace;">
+                JD ${item.jdUtc.toFixed(2)}
+              </span>
+            </div>
+            <h2 class="eclipse-title">${item.typeLabel}</h2>
+            <p class="eclipse-date">${dtInfo.dateString}</p>
+
+            <table class="data-table">
+              <tbody>
+                <tr>
+                  <td>Puncak Gerhana (Maks)</td>
+                  <td style="color:${isSolar ? 'var(--accent-solar)' : 'var(--accent-lunar)'};">${dtInfo.timeString}</td>
+                </tr>
+                <tr>
+                  <td>Magnitudo Gerhana</td>
+                  <td>${item.magnitude.toFixed(4)}</td>
+                </tr>
+                <tr>
+                  <td>Koordinat Gamma (γ)</td>
+                  <td>${item.gamma >= 0 ? '+' + item.gamma.toFixed(4) : item.gamma.toFixed(4)}</td>
+                </tr>
+                ${extraRows}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="visibility-note ${visInfo.visible ? 'indo-visible' : ''}">
+            <strong>Status Pengamatan Indonesia:</strong><br>
+            ${visInfo.text}
+          </div>
+        `;
+
+        fragment.appendChild(card);
+      });
+
+      container.appendChild(fragment);
+    }
+
+    /**
+     * Ekspor hasil perhitungan ke file JSON dengan validasi penuh
+     */
+    function exportDatasetToJson() {
+      try {
+        if (!Array.isArray(currentEclipseDataset) || currentEclipseDataset.length === 0) {
+          alert('Data gerhana masih kosong. Silakan klik tombol Hitung terlebih dahulu.');
+          return;
+        }
+
+        const payload = {
+          metadata: {
+            application: 'FALAK-ECLIPSE PRO',
+            developer: 'fatur62',
+            algorithm: 'Jean Meeus Astronomical Algorithms (Ch. 49 & 54)',
+            generatedAt: new Date().toISOString(),
+            totalEvents: currentEclipseDataset.length
+          },
+          eclipses: currentEclipseDataset
+        };
+
+        const jsonString = JSON.stringify(payload, null, 2);
+        // Validasi ulang bahwa JSON valid sebelum diunduh
+        JSON.parse(jsonString);
+
+        const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ephemeris-gerhana-fatur62-${Date.now()}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Kesalahan saat mengekspor JSON:', error);
+        alert('Terjadi kesalahan saat memproses file JSON.');
+      }
+    }
+
+    // Inisialisasi Event Listener secara bersih
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnCalculate = document.getElementById('btnCalculate');
+      const btnExportJson = document.getElementById('btnExportJson');
+      const filterType = document.getElementById('filterType');
+      const timezoneOffset = document.getElementById('timezoneOffset');
+
+      btnCalculate.addEventListener('click', generateEclipsePredictions);
+      btnExportJson.addEventListener('click', exportDatasetToJson);
+      filterType.addEventListener('change', generateEclipsePredictions);
+      timezoneOffset.addEventListener('change', generateEclipsePredictions);
+
+      // Jalankan perhitungan otomatis saat pertama kali dibuka
+      generateEclipsePredictions();
+    });
+  </script>
+</body>
+</html>
