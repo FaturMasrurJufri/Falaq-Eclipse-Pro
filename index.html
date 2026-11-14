@@ -6,9 +6,9 @@
   <title>FALAK-ECLIPSE PRO | Kalkulator & Prediktor Gerhana</title>
   <style>
     :root {
-      --bg-primary: #0b0f19;
-      --bg-card: #151c2c;
-      --bg-card-hover: #1e2940;
+      --bg-primary: rgba(11, 15, 25, 0.90);
+      --bg-card: rgba(21, 28, 44, 0.85);
+      --bg-card-hover: rgba(30, 41, 64, 0.90);
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
       --accent-solar: #f59e0b;
@@ -16,7 +16,7 @@
       --accent-lunar: #38bdf8;
       --accent-lunar-bg: rgba(56, 189, 248, 0.12);
       --accent-green: #10b981;
-      --border-color: #26334d;
+      --border-color: rgba(38, 51, 77, 0.7);
       --radius: 12px;
     }
 
@@ -26,29 +26,88 @@
       padding: 0;
     }
 
+    /* Background Ruang Angkasa Malam yang Cerah (Deep Space & Stars) */
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-primary);
+      background-color: #050811;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(147, 51, 234, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, #050811 100%);
       color: var(--text-main);
       line-height: 1.6;
       padding: 24px 16px;
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Lapisan Bintang Berkelap-kelip (Twinkling Starfield) */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Lapisan Bintang Kecil */
+    body::before {
+      background-image: 
+        radial-gradient(1px 1px at 25px 50px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 150px 220px, #38bdf8, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 300px 100px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 450px 350px, #f59e0b, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 600px 150px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 750px 280px, #38bdf8, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 900px 80px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 1050px 400px, #ffffff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 550px 450px;
+      opacity: 0.65;
+      animation: twinkleSlow 8s ease-in-out infinite alternate;
+    }
+
+    /* Lapisan Bintang Besar / Galaksi */
+    body::after {
+      background-image: 
+        radial-gradient(2px 2px at 100px 200px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2.5px 2.5px at 350px 400px, #f59e0b, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 550px 80px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 800px 300px, #38bdf8, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 700px 600px;
+      opacity: 0.4;
+      animation: twinkleFast 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkleSlow {
+      0% { opacity: 0.45; transform: scale(1); }
+      100% { opacity: 0.85; transform: scale(1.02); }
+    }
+
+    @keyframes twinkleFast {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.7; }
     }
 
     .app-container {
       max-width: 1180px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     /* Header & Identitas Developer */
     .app-header {
       text-align: center;
       padding: 32px 20px;
-      background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+      background: radial-gradient(circle at top, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
       border: 1px solid var(--border-color);
       border-radius: var(--radius);
       margin-bottom: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
     }
 
     .app-title {
@@ -116,6 +175,8 @@
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 16px;
       align-items: end;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
     }
 
     .form-group {
@@ -133,18 +194,19 @@
     }
 
     .form-control {
-      background-color: var(--bg-primary);
+      background-color: rgba(11, 15, 25, 0.8);
       border: 1px solid var(--border-color);
       color: var(--text-main);
       padding: 10px 12px;
       border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .form-control:focus {
       border-color: var(--accent-lunar);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
     }
 
     .btn-group {
@@ -167,14 +229,16 @@
     .btn-primary {
       background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
     .btn-primary:hover {
       filter: brightness(1.15);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
     }
 
     .btn-secondary {
-      background-color: #1e293b;
+      background-color: rgba(30, 41, 59, 0.8);
       color: #e2e8f0;
       border: 1px solid #334155;
     }
@@ -199,6 +263,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
     }
 
     .stat-info span {
@@ -231,17 +297,20 @@
       border: 1px solid var(--border-color);
       border-radius: var(--radius);
       padding: 20px;
-      transition: transform 0.2s ease, background-color 0.2s ease;
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
     }
 
     .eclipse-card:hover {
-      transform: translateY(-3px);
+      transform: translateY(-4px);
       background-color: var(--bg-card-hover);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
     }
 
     .eclipse-card.solar {
@@ -323,25 +392,26 @@
       padding: 8px 12px;
       border-radius: 6px;
       font-size: 0.82rem;
-      background-color: rgba(15, 23, 42, 0.65);
+      background-color: rgba(15, 23, 42, 0.75);
       border-left: 3px solid #64748b;
       color: #cbd5e1;
     }
 
     .visibility-note.indo-visible {
       border-left-color: var(--accent-green);
-      background-color: rgba(16, 185, 129, 0.1);
+      background-color: rgba(16, 185, 129, 0.12);
       color: #d1fae5;
     }
 
     .status-banner {
-      background-color: #1e293b;
+      background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
       padding: 16px;
       border-radius: var(--radius);
       text-align: center;
       grid-column: 1 / -1;
+      backdrop-filter: blur(10px);
     }
 
     @media (max-width: 640px) {
@@ -411,7 +481,7 @@
           <span>Total Kejadian Gerhana</span>
           <strong id="statTotal">0</strong>
         </div>
-        <span class="stat-tag" style="background:#1e293b; color:#cbd5e1;">Siklus Saros/Sinodik</span>
+        <span class="stat-tag" style="background:rgba(30,41,59,0.8); color:#cbd5e1;">Siklus Saros/Sinodik</span>
       </div>
       <div class="stat-card">
         <div class="stat-info">
@@ -444,13 +514,8 @@
     const cosD = (deg) => Math.cos(deg * DEG2RAD);
     const mod360 = (deg) => ((deg % 360) + 360) % 360;
 
-    // State penyimpanan data JSON hasil kalkulasi dengan struktur tervalidasi
     let currentEclipseDataset = [];
 
-    /**
-     * Estimasi nilai Delta T (TD - UT) dalam satuan detik untuk abad ke-20 & 21
-     * Berdasarkan polinomial NASA (Espenak & Meeus)
-     */
     function calculateDeltaT(year) {
       const t = (year - 2000) / 100;
       if (year >= 2005 && year <= 2050) {
@@ -460,19 +525,11 @@
       return 102.3 + 123.5 * t + 32.5 * t * t;
     }
 
-    /**
-     * Konversi Julian Day (JD) ke objek Date JavaScript (UTC)
-     */
     function julianDayToDate(jd) {
       const unixMillis = (jd - 2440587.5) * 86400000;
       return new Date(unixMillis);
     }
 
-    /**
-     * Kalkulasi Gerhana untuk nilai k tertentu
-     * k integer (x.0) = Bulan Baru (Potensi Gerhana Matahari)
-     * k setengah integer (x.5) = Bulan Purnama (Potensi Gerhana Bulan)
-     */
     function computeEclipseForK(k) {
       const isSolar = Math.abs(k - Math.round(k)) < 0.001;
       const T = k / 1236.85;
@@ -480,36 +537,24 @@
       const T3 = T2 * T;
       const T4 = T3 * T;
 
-      // Waktu Fase Rata-Rata (JDE)
       let JDE = 2451550.09766 + 29.530588861 * k
                 + 0.00015437 * T2
                 - 0.000000150 * T3
                 + 0.00000000073 * T4;
 
-      // Eksentrisitas orbit Bumi (E)
       const E = 1 - 0.002516 * T - 0.0000074 * T2;
-
-      // Anomali rata-rata Matahari (M)
       const M = mod360(2.5534 + 29.10535670 * k - 0.0000014 * T2 - 0.00000011 * T3);
-
-      // Anomali rata-rata Bulan (M')
       const Mprime = mod360(201.5643 + 385.81693528 * k + 0.0107582 * T2 + 0.00001238 * T3 - 0.000000058 * T4);
-
-      // Argumen Lintang Bulan (F)
       const F = mod360(160.7108 + 390.67050284 * k - 0.0016118 * T2 - 0.00000227 * T3 + 0.000000011 * T4);
-
-      // Bujur Titik Simpul Naik Bulan (Omega)
       const Omega = mod360(124.7746 - 1.56375588 * k + 0.0020672 * T2 + 0.00000215 * T3);
 
-      // Syarat batas kemiringan simpul (F harus dekat dengan 0°, 180°, atau 360°)
       let diffF = Math.abs(F % 180);
       if (diffF > 90) diffF = 180 - diffF;
-      if (diffF > 21.5) return null; // Tidak mungkin terjadi gerhana
+      if (diffF > 21.5) return null;
 
       const F1 = F - 0.02665 * sinD(Omega);
       const A1 = 299.77 + 0.107408 * k - 0.009173 * T2;
 
-      // Koreksi waktu puncak gerhana (JDE Maximum Eclipse)
       let deltaJDE = (isSolar ? -0.4075 : -0.4065) * sinD(Mprime)
                    + 0.1721 * E * sinD(M)
                    + 0.0161 * sinD(2 * Mprime)
@@ -529,7 +574,6 @@
 
       const JDE_Max = JDE + deltaJDE;
 
-      // Besaran P, Q, W, gamma, dan u dari Meeus
       const P = 0.2070 * E * sinD(M)
               + 0.0024 * E * sinD(2 * M)
               - 0.0392 * sinD(Mprime)
@@ -554,14 +598,11 @@
               - 0.0005 * cosD(M + Mprime);
 
       const absGamma = Math.abs(gamma);
-
-      // Konversi JDE (TD) ke JD (UTC) menggunakan Delta T
       const approxYear = 2000 + (k / 12.3685);
       const deltaTSeconds = calculateDeltaT(approxYear);
       const JD_UTC = JDE_Max - (deltaTSeconds / 86400);
 
       if (isSolar) {
-        // Klasifikasi Gerhana Matahari
         const maxLimit = 1.5433 + u;
         if (absGamma > maxLimit) return null;
 
@@ -577,10 +618,8 @@
             const omegaLimit = 0.00464 * Math.sqrt(1 - gamma * gamma);
             subType = (u < omegaLimit) ? 'Gerhana Matahari Hibrida (Cincin-Total)' : 'Gerhana Matahari Cincin';
           }
-          // Rasio diameter bulan terhadap matahari untuk gerhana sentral
           magnitude = (1.5433 + u - absGamma) / (0.5461 + 2 * u);
         } else {
-          // Cek non-sentral atau sebagian
           if (absGamma < 0.9972 + Math.abs(u)) {
             subType = (u < 0) ? 'Gerhana Matahari Total (Non-Sentral)' : 'Gerhana Matahari Cincin (Non-Sentral)';
           } else {
@@ -604,10 +643,6 @@
           semiDurationPenumbraMin: null
         };
       } else {
-        // Klasifikasi Gerhana Bulan
-        const rho = 1.2848 + u; // Radius bayangan penumbra
-        const sigma = 0.7403 - u; // Radius bayangan umbra
-
         const magPenumbra = (1.5573 + u - absGamma) / 0.5450;
         const magUmbra = (1.0128 - u - absGamma) / 0.5450;
 
@@ -627,7 +662,6 @@
           primaryMag = magPenumbra;
         }
 
-        // Semi-durasi fase gerhana bulan (dalam menit)
         const n = 0.5458 + 0.0400 * cosD(Mprime);
         const penumbraSemiMin = (60 / n) * Math.sqrt(Math.max(0, Math.pow(1.5573 + u, 2) - gamma * gamma));
         const umbraSemiMin = magUmbra > 0
@@ -650,16 +684,11 @@
       }
     }
 
-    /**
-     * Evaluasi indikasi visibilitas di wilayah Indonesia (Bujur ~95° BT s/d 141° BT, Lintang 6° LU s/d 11° LS)
-     */
     function evaluateIndonesiaVisibility(eclipseItem) {
       const peakUtcDate = julianDayToDate(eclipseItem.jdUtc);
-      // Waktu lokal WIB (UTC + 7)
       const wibHours = (peakUtcDate.getUTCHours() + peakUtcDate.getUTCMinutes() / 60 + 7) % 24;
 
       if (eclipseItem.category === 'LUNAR') {
-        // Gerhana bulan terlihat di seluruh belahan bumi yang sedang malam (18:00 - 06:00 WIB)
         const halfDurHours = (eclipseItem.semiDurationPenumbraMin || 120) / 60;
         const startWib = (wibHours - halfDurHours + 24) % 24;
         const endWib = (wibHours + halfDurHours) % 24;
@@ -683,7 +712,6 @@
           text: 'Tidak teramati di Indonesia (Puncak terjadi pada siang hari waktu Indonesia).'
         };
       } else {
-        // Untuk Gerhana Matahari: perlu siang hari di Indonesia (06:30 - 17:30 WIB) dan lintasan Gamma dekat ekuator
         const isDaytimeIndo = (wibHours >= 6.5 && wibHours <= 17.5);
         const isNearEquatorialZone = Math.abs(eclipseItem.gamma) <= 0.85;
 
@@ -705,9 +733,6 @@
       }
     }
 
-    /**
-     * Format Tanggal & Jam sesuai Zona Waktu yang dipilih
-     */
     function formatDateTimeByOffset(jdUtc, offsetHours) {
       const shiftedMillis = (jdUtc - 2440587.5) * 86400000 + (offsetHours * 3600000);
       const d = new Date(shiftedMillis);
@@ -734,9 +759,6 @@
       };
     }
 
-    /**
-     * Fungsi Utama: Menghitung rentang tahun dan memperbarui DOM
-     */
     function generateEclipsePredictions() {
       const startYearInput = document.getElementById('startYear');
       const endYearInput = document.getElementById('endYear');
@@ -753,14 +775,12 @@
         endYearInput.value = endYear;
       }
 
-      // Hitung rentang indeks lunasi k
       const kStart = Math.floor((startYear - 2000) * 12.3685) - 2;
       const kEnd = Math.ceil((endYear - 2000 + 1) * 12.3685) + 2;
 
       const results = [];
 
       for (let k = kStart; k <= kEnd; k++) {
-        // 1. Cek Gerhana Matahari (Bulan Baru = k.0)
         const solarEclipse = computeEclipseForK(k);
         if (solarEclipse) {
           const dtInfo = formatDateTimeByOffset(solarEclipse.jdUtc, tzOffset);
@@ -769,7 +789,6 @@
           }
         }
 
-        // 2. Cek Gerhana Bulan (Bulan Purnama = k + 0.5)
         const lunarEclipse = computeEclipseForK(k + 0.5);
         if (lunarEclipse) {
           const dtInfo = formatDateTimeByOffset(lunarEclipse.jdUtc, tzOffset);
@@ -779,10 +798,8 @@
         }
       }
 
-      // Urutkan berdasarkan waktu kejadian (JD UTC)
       results.sort((a, b) => a.jdUtc - b.jdUtc);
 
-      // Simpan secara aman ke dataset JSON
       try {
         const serialized = JSON.stringify(results);
         const parsed = JSON.parse(serialized);
@@ -797,9 +814,6 @@
       renderResults(currentEclipseDataset, filterType, tzOffset);
     }
 
-    /**
-     * Render kartu hasil ke dalam Grid DOM
-     */
     function renderResults(dataset, filterType, tzOffset) {
       const container = document.getElementById('eclipseResults');
       const statTotal = document.getElementById('statTotal');
@@ -844,7 +858,6 @@
         const card = document.createElement('article');
         card.className = `eclipse-card ${isSolar ? 'solar' : 'lunar'}`;
 
-        // Baris tambahan khusus gerhana bulan (durasi umbra/penumbra)
         let extraRows = '';
         if (!isSolar) {
           const totalPenumbraHours = ((item.semiDurationPenumbraMin * 2) / 60).toFixed(2);
@@ -916,9 +929,6 @@
       container.appendChild(fragment);
     }
 
-    /**
-     * Ekspor hasil perhitungan ke file JSON dengan validasi penuh
-     */
     function exportDatasetToJson() {
       try {
         if (!Array.isArray(currentEclipseDataset) || currentEclipseDataset.length === 0) {
@@ -938,7 +948,6 @@
         };
 
         const jsonString = JSON.stringify(payload, null, 2);
-        // Validasi ulang bahwa JSON valid sebelum diunduh
         JSON.parse(jsonString);
 
         const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
@@ -956,7 +965,6 @@
       }
     }
 
-    // Inisialisasi Event Listener secara bersih
     document.addEventListener('DOMContentLoaded', () => {
       const btnCalculate = document.getElementById('btnCalculate');
       const btnExportJson = document.getElementById('btnExportJson');
@@ -968,7 +976,6 @@
       filterType.addEventListener('change', generateEclipsePredictions);
       timezoneOffset.addEventListener('change', generateEclipsePredictions);
 
-      // Jalankan perhitungan otomatis saat pertama kali dibuka
       generateEclipsePredictions();
     });
   </script>
